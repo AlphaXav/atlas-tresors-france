@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Atlas des Trésors de France — le guide interactif des plus beaux villages de France pour préparer vacances, road trips et week-ends." />
+  <meta name="theme-color" content="#16302E" />
+  <title>Atlas des Trésors de France</title>
+
+  <!-- Polices (chargées en ligne ; repli système hors connexion) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..560&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet (carte interactive ; nécessite une connexion) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icons/icon.svg" />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== EN-TÊTE ===================== -->
+  <header class="site-header">
+    <div class="site-header__inner wrap">
+      <a class="brand" href="#villages" aria-label="Accueil">
+        <span class="brand__mark" id="brand-mark"></span>
+        <span class="brand__name">Atlas des Trésors<small>de France</small></span>
+      </a>
+      <nav class="nav" id="nav" aria-label="Navigation principale"></nav>
+
+      <div class="search" role="search">
+        <span class="search__icon" id="search-icon"></span>
+        <input id="search-input" type="search" placeholder="Rechercher un village, une région…" aria-label="Rechercher" autocomplete="off" />
+      </div>
+
+      <div class="header-tools">
+        <button class="icon-btn" id="fav-btn" aria-label="Mes favoris">
+          <span id="fav-heart"></span><span class="fav-count hidden" id="fav-count">0</span>
+        </button>
+        <button class="icon-btn" id="theme-toggle" aria-label="Changer de thème"></button>
+        <button class="icon-btn nav-toggle" id="nav-toggle" aria-label="Menu"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ===================== VUE VILLAGES ===================== -->
+    <section id="view-villages" class="view is-active">
+      <div class="hero">
+        <div class="hero__grid"></div>
+        <div class="hero__inner">
+          <span class="eyebrow">Le guide des plus beaux villages</span>
+          <h1>Explorez les <em>trésors</em> cachés de France</h1>
+          <p class="lead">Fiches détaillées, notes, panoramas et itinéraires clés en main — pour composer vos vacances, road trips et week-ends, région par région.</p>
+          <div class="hero__stats" id="hero-stats"></div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <!-- Filtres -->
+        <aside class="filters" id="filters">
+          <h3 id="filters-title">Filtres <button class="filters__reset" id="filters-reset">Réinitialiser</button></h3>
+          <div class="filters__body" id="filters-body"></div>
+        </aside>
+
+        <!-- Liste -->
+        <div>
+          <div class="toolbar">
+            <div class="toolbar__count" id="villages-count">—</div>
+            <div class="toolbar__spacer"></div>
+            <label class="sr-only" for="sort-select">Trier</label>
+            <select class="select" id="sort-select">
+              <option value="note-desc">Trier : meilleure note</option>
+              <option value="note-asc">Note croissante</option>
+              <option value="nom-asc">Nom (A → Z)</option>
+              <option value="medieval-desc">Patrimoine médiéval</option>
+              <option value="gastro-desc">Gastronomie</option>
+              <option value="pop-asc">Population croissante</option>
+              <option value="pop-desc">Population décroissante</option>
+            </select>
+            <button class="btn btn--ghost" onclick="window.print()" title="Imprimer / Export PDF" id="print-btn"></button>
+          </div>
+          <div id="villages-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== VUE CARTE ===================== -->
+    <section id="view-map" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Cartographie</span>
+        <h1>La carte des villages</h1>
+        <p class="map-note">Cliquez sur un repère pour ouvrir sa fiche. Les repères <b>bleus</b> signalent les biens du patrimoine mondial de l'UNESCO. Les tracés de road trips s'affichent depuis l'onglet « Road trips ». La carte se charge depuis Internet.</p>
+      </div>
+      <div id="map"></div>
+    </section>
+
+    <!-- ===================== VUE ROAD TRIPS ===================== -->
+    <section id="view-roadtrips" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Itinéraires</span>
+        <h1>Road trips prêts à l'emploi</h1>
+        <p>Des parcours optimisés par région, avec durée, distance, ordre de visite, gastronomie, points de vue et hébergements.</p>
+      </div>
+      <div class="rt-grid"></div>
+    </section>
+
+    <!-- ===================== VUE PATRIMOINE MONDIAL (UNESCO) ===================== -->
+    <section id="view-unesco" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Patrimoine mondial</span>
+        <h1>Les sites <em>UNESCO</em> de France</h1>
+        <p>Les 54 biens français inscrits au patrimoine mondial de l'humanité. Filtrez par type, ouvrez la fiche officielle, et retrouvez les villages de l'Atlas concernés.</p>
+      </div>
+      <div class="stat-grid" id="unesco-stats"></div>
+      <div class="unesco-tabs" id="unesco-tabs"></div>
+      <div class="unesco-grid" id="unesco-list"></div>
+    </section>
+
+    <!-- ===================== VUE CLASSEMENTS ===================== -->
+    <section id="view-rankings" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Palmarès</span>
+        <h1>Classements thématiques</h1>
+        <p>Les meilleurs villages par thème. Les notes sont éditoriales et ajustables dans <code>data/villages.js</code>.</p>
+      </div>
+      <div class="rank-tabs" id="rank-tabs"></div>
+      <div class="rank-list" id="rank-list"></div>
+    </section>
+
+    <!-- ===================== VUE STATISTIQUES ===================== -->
+    <section id="view-stats" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Tableau de bord</span>
+        <h1>Statistiques & galerie</h1>
+        <p>Vue d'ensemble de la base et galerie des villages les plus photogéniques.</p>
+      </div>
+      <div class="stat-grid" id="stat-cards"></div>
+      <h3 style="margin:1.5rem 0 1rem">Répartition par région</h3>
+      <div class="bars" id="stat-bars"></div>
+      <h3 style="margin:2.4rem 0 1rem">Galerie</h3>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <!-- ===================== VUE FAVORIS ===================== -->
+    <section id="view-favoris" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Votre sélection</span>
+        <h1>Mes favoris</h1>
+        <p>Enregistrés localement sur cet appareil — aucun compte requis.</p>
+      </div>
+      <div id="favoris-list"></div>
+    </section>
+
+  </main>
+
+  <!-- ===================== MODALE FICHE ===================== -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Fiche du village">
+    <div class="modal__backdrop"></div>
+    <div class="modal__panel"></div>
+  </div>
+
+  <!-- ===================== LIGHTBOX PHOTO ===================== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo agrandie">
+    <div class="lightbox__backdrop"></div>
+    <button class="lightbox__close" id="lightbox-close" aria-label="Fermer">&times;</button>
+    <button class="lightbox__nav lightbox__prev" id="lightbox-prev" aria-label="Photo précédente">&lsaquo;</button>
+    <button class="lightbox__nav lightbox__next" id="lightbox-next" aria-label="Photo suivante">&rsaquo;</button>
+    <figure class="lightbox__figure">
+      <img id="lightbox-img" alt="" />
+      <figcaption id="lightbox-cap"></figcaption>
+    </figure>
+  </div>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <!-- Leaflet (optionnel ; échec silencieux hors connexion) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- 1) DONNÉES (JSON encapsulé — chargement universel, y compris file://) -->
+  <script src="data/villages.js"></script>
+  <script src="data/regions.js"></script>
+  <script src="data/roadtrips.js"></script>
+  <script src="data/gastronomie.js"></script>
+  <script src="data/panoramas.js"></script>
+  <script src="data/chateaux.js"></script>
+  <script src="data/photos.js"></script>
+  <script src="data/officiel.js"></script>
+  <script src="data/vpf.js"></script>
+  <script src="data/unesco.js"></script>
+
+  <!-- 2) NOYAU -->
+  <!-- Détection automatique des images déposées dans assets/images/ -->
+  <!-- (fichiers <id>.jpg, <id>1.jpg, <id>2.jpg… ; voir data/villages.js pour les id) -->
+  <script>window.ATLAS = window.ATLAS || {}; window.ATLAS.config = Object.assign({}, window.ATLAS.config, { tryConventionImages: true });</script>
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/store.js"></script>
+
+  <!-- 3) VUES -->
+  <script src="assets/js/views/villages.js"></script>
+  <script src="assets/js/views/others.js"></script>
+  <script src="assets/js/views/unesco.js"></script>
+
+  <!-- 4) APPLICATION -->
+  <script src="assets/js/app.js"></script>
+
+  <!-- Icônes d'en-tête (injectées après chargement du noyau) -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var I = ATLAS.icons;
+      document.getElementById("brand-mark").innerHTML = I.compass;
+      document.getElementById("search-icon").innerHTML = I.search;
+      document.getElementById("fav-heart").innerHTML = I.heart;
+      document.getElementById("print-btn").innerHTML = I.pdf + " PDF";
+    });
+  </script>
+</body>
+</html>

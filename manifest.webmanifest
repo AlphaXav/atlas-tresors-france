@@ -1,0 +1,15 @@
+{
+  "name": "Atlas des Trésors de France",
+  "short_name": "Atlas France",
+  "description": "Le guide interactif des plus beaux villages de France : fiches, carte, road trips et favoris.",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F1EDE1",
+  "theme_color": "#16302E",
+  "icons": [
+    { "src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

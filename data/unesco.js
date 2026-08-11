@@ -1,0 +1,136 @@
+/* ============================================================================
+ * Atlas des Trésors de France — data/unesco.js
+ * ----------------------------------------------------------------------------
+ * Biens français inscrits au patrimoine mondial de l'UNESCO.
+ * DONNÉES, pas de code applicatif ici.
+ *
+ * Fiabilité des champs :
+ *   - nom / annee / type / region / unescoId : RÉELS (liste UNESCO, 46e/47e session)
+ *   - lat / lng : point représentatif du bien (les biens en série couvrent
+ *     plusieurs lieux ; la coordonnée pointe un site emblématique)
+ *   - resume : notice éditoriale courte
+ *
+ * À jour au terme de la 47e session (2025) : 54 biens français
+ *   45 culturels · 7 naturels · 2 mixtes.
+ *
+ * Champ "villages" : id(s) de villages de data/villages.js situés dans le
+ * périmètre du bien (déclenche le badge « Patrimoine mondial » sur leur fiche).
+ * Champ "transfrontalier" : bien partagé avec d'autres pays / en série.
+ * "type" ∈ { "culturel", "naturel", "mixte" }.
+ * Lien officiel : base + unescoId  ->  https://whc.unesco.org/fr/list/<id>
+ * ========================================================================== */
+window.ATLAS = window.ATLAS || {};
+window.ATLAS.unescoBase = "https://whc.unesco.org/fr/list/";
+window.ATLAS.unesco = [
+  { id: "saint-savin", nom: "Abbaye de Saint-Savin-sur-Gartempe", annee: 1983, type: "culturel", region: "Nouvelle-Aquitaine", lat: 46.5661, lng: 0.8625, unescoId: 230,
+    resume: "Ensemble de fresques romanes des XIe–XIIe siècles, surnommé la « Sixtine romane »." },
+  { id: "fontenay", nom: "Abbaye cistercienne de Fontenay", annee: 1981, type: "culturel", region: "Bourgogne-Franche-Comté", lat: 47.6403, lng: 4.3892, unescoId: 165,
+    resume: "L'une des plus anciennes abbayes cisterciennes conservées, fondée en 1118." },
+  { id: "arles", nom: "Arles, monuments romains et romans", annee: 1981, type: "culturel", region: "Provence-Alpes-Côte d'Azur", lat: 43.6768, lng: 4.6280, unescoId: 164,
+    resume: "Arènes, théâtre antique, thermes et cloître Saint-Trophime." },
+  { id: "vezelay-colline", nom: "Basilique et colline de Vézelay", annee: 1979, type: "culturel", region: "Bourgogne-Franche-Comté", lat: 47.4661, lng: 3.7486, unescoId: 84,
+    villages: ["vezelay"],
+    resume: "Chef-d'œuvre de l'art roman bourguignon, l'un des grands départs vers Compostelle." },
+  { id: "beffrois", nom: "Beffrois de Belgique et de France", annee: 1999, type: "culturel", region: "Hauts-de-France", lat: 50.2910, lng: 2.7775, unescoId: 943, transfrontalier: true,
+    resume: "23 beffrois du nord de la France, symboles des libertés communales médiévales." },
+  { id: "bordeaux", nom: "Bordeaux, Port de la Lune", annee: 2007, type: "culturel", region: "Nouvelle-Aquitaine", lat: 44.8412, lng: -0.5747, unescoId: 1256,
+    resume: "Vaste ensemble urbain classique du XVIIIe siècle sur le croissant de la Garonne." },
+  { id: "canal-du-midi", nom: "Canal du Midi", annee: 1996, type: "culturel", region: "Occitanie", lat: 43.3450, lng: 2.0500, unescoId: 770,
+    resume: "240 km d'ouvrage hydraulique de Pierre-Paul Riquet, de Toulouse à la Méditerranée." },
+  { id: "amiens", nom: "Cathédrale d'Amiens", annee: 1981, type: "culturel", region: "Hauts-de-France", lat: 49.8949, lng: 2.3020, unescoId: 162,
+    resume: "La plus vaste cathédrale gothique de France, unité et ampleur exceptionnelles." },
+  { id: "bourges", nom: "Cathédrale de Bourges", annee: 1992, type: "culturel", region: "Centre-Val de Loire", lat: 47.0821, lng: 2.3988, unescoId: 635,
+    resume: "Saint-Étienne, chef-d'œuvre gothique célèbre pour ses vitraux du XIIIe siècle." },
+  { id: "chartres", nom: "Cathédrale de Chartres", annee: 1979, type: "culturel", region: "Centre-Val de Loire", lat: 48.4477, lng: 1.4880, unescoId: 81,
+    resume: "Cathédrale gothique aux vitraux et à la statuaire d'une exceptionnelle conservation." },
+  { id: "reims", nom: "Cathédrale Notre-Dame, Saint-Remi et palais du Tau, Reims", annee: 1991, type: "culturel", region: "Grand Est", lat: 49.2537, lng: 4.0345, unescoId: 601,
+    resume: "Le lieu du sacre des rois de France, joyau du gothique champenois." },
+  { id: "causses-cevennes", nom: "Causses et Cévennes, paysage agropastoral", annee: 2011, type: "culturel", region: "Occitanie", lat: 44.1000, lng: 3.5800, unescoId: 1153,
+    resume: "Paysage culturel vivant de l'agropastoralisme méditerranéen de montagne." },
+  { id: "avignon", nom: "Centre historique d'Avignon", annee: 1995, type: "culturel", region: "Provence-Alpes-Côte d'Azur", lat: 43.9508, lng: 4.8076, unescoId: 228,
+    resume: "Palais des papes, ensemble épiscopal et pont Saint-Bénézet (pont d'Avignon)." },
+  { id: "compostelle", nom: "Chemins de Saint-Jacques-de-Compostelle en France", annee: 1998, type: "culturel", region: "Plusieurs régions", lat: 45.0430, lng: 3.8850, unescoId: 868, transfrontalier: true,
+    villages: ["vezelay", "conques", "saint-guilhem-le-desert", "estaing", "rocamadour"],
+    resume: "71 monuments et 7 tronçons jalonnant les routes de pèlerinage vers Compostelle." },
+  { id: "albi", nom: "Cité épiscopale d'Albi", annee: 2010, type: "culturel", region: "Occitanie", lat: 43.9284, lng: 2.1428, unescoId: 1337,
+    resume: "Cathédrale-forteresse Sainte-Cécile en brique et palais de la Berbie." },
+  { id: "salines", nom: "Salines de Salins-les-Bains à la Saline royale d'Arc-et-Senans", annee: 1982, type: "culturel", region: "Bourgogne-Franche-Comté", lat: 47.0330, lng: 5.7780, unescoId: 203,
+    resume: "Manufacture idéale du sel imaginée par Claude-Nicolas Ledoux au siècle des Lumières." },
+  { id: "vauban", nom: "Fortifications de Vauban", annee: 2008, type: "culturel", region: "Plusieurs régions", lat: 47.2306, lng: 6.0328, unescoId: 1283,
+    resume: "12 sites fortifiés emblématiques du génie militaire de Vauban." },
+  { id: "saint-emilion", nom: "Juridiction de Saint-Émilion", annee: 1999, type: "culturel", region: "Nouvelle-Aquitaine", lat: 44.8938, lng: -0.1556, unescoId: 932,
+    resume: "Paysage viticole médiéval et remarquable église monolithe creusée dans le roc." },
+  { id: "le-havre", nom: "Le Havre, la ville reconstruite par Auguste Perret", annee: 2005, type: "culturel", region: "Normandie", lat: 49.4944, lng: 0.1079, unescoId: 1181,
+    resume: "Reconstruction d'après-guerre (1945-1964) en béton, œuvre d'Auguste Perret." },
+  { id: "carnac", nom: "Mégalithes de Carnac et des rives du Morbihan", annee: 2025, type: "culturel", region: "Bretagne", lat: 47.5943, lng: -3.0797, unescoId: 1725,
+    resume: "Alignements et ensembles mégalithiques néolithiques — dernier bien français inscrit (2025)." },
+  { id: "mont-saint-michel", nom: "Mont-Saint-Michel et sa baie", annee: 1979, type: "culturel", region: "Normandie", lat: 48.6361, lng: -1.5115, unescoId: 80,
+    resume: "Abbaye gothique sur un îlot cerné par les plus grandes marées d'Europe continentale." },
+  { id: "fontainebleau", nom: "Palais et parc de Fontainebleau", annee: 1981, type: "culturel", region: "Île-de-France", lat: 48.4020, lng: 2.7003, unescoId: 160,
+    resume: "Résidence royale du XIIe au XIXe siècle et son vaste domaine forestier." },
+  { id: "versailles", nom: "Palais et parc de Versailles", annee: 1979, type: "culturel", region: "Île-de-France", lat: 48.8049, lng: 2.1204, unescoId: 83,
+    resume: "Château, jardins à la française et Trianons, apogée de l'art royal sous Louis XIV." },
+  { id: "paris-seine", nom: "Paris, rives de la Seine", annee: 1991, type: "culturel", region: "Île-de-France", lat: 48.8556, lng: 2.3496, unescoId: 600,
+    resume: "Du Louvre à la tour Eiffel, un paysage urbain façonné au fil des siècles." },
+  { id: "nancy", nom: "Places Stanislas, de la Carrière et d'Alliance à Nancy", annee: 1983, type: "culturel", region: "Grand Est", lat: 48.6937, lng: 6.1834, unescoId: 229,
+    resume: "Ensemble urbain du XVIIIe siècle, chef-d'œuvre de l'art classique et des grilles dorées." },
+  { id: "pont-du-gard", nom: "Pont du Gard (aqueduc romain)", annee: 1985, type: "culturel", region: "Occitanie", lat: 43.9475, lng: 4.5350, unescoId: 334,
+    resume: "Aqueduc romain à trois niveaux d'arches enjambant le Gardon." },
+  { id: "provins", nom: "Provins, ville de foire médiévale", annee: 2001, type: "culturel", region: "Île-de-France", lat: 48.5606, lng: 3.2996, unescoId: 873,
+    resume: "Ville des foires de Champagne, remparts et tour César admirablement préservés." },
+  { id: "lyon", nom: "Site historique de Lyon", annee: 1998, type: "culturel", region: "Auvergne-Rhône-Alpes", lat: 45.7620, lng: 4.8270, unescoId: 872,
+    resume: "2000 ans d'histoire, du Vieux Lyon Renaissance à la colline de la Croix-Rousse." },
+  { id: "palafittes", nom: "Sites palafittiques préhistoriques autour des Alpes", annee: 2011, type: "culturel", region: "Plusieurs régions", lat: 46.6700, lng: 5.8000, unescoId: 1363, transfrontalier: true,
+    resume: "Habitats sur pilotis néolithiques des lacs alpins (composantes du Jura et de Savoie)." },
+  { id: "vezere", nom: "Sites préhistoriques et grottes ornées de la vallée de la Vézère", annee: 1979, type: "culturel", region: "Nouvelle-Aquitaine", lat: 44.9370, lng: 1.0120, unescoId: 85,
+    resume: "Lascaux et 147 gisements préhistoriques, berceau mondial de l'art pariétal." },
+  { id: "strasbourg", nom: "Strasbourg, de la Grande-Île à la Neustadt", annee: 1988, type: "culturel", region: "Grand Est", lat: 48.5817, lng: 7.7500, unescoId: 495,
+    resume: "Cœur historique médiéval autour de la cathédrale et ville allemande impériale." },
+  { id: "orange", nom: "Théâtre antique et Arc de triomphe d'Orange", annee: 1981, type: "culturel", region: "Provence-Alpes-Côte d'Azur", lat: 44.1360, lng: 4.8083, unescoId: 163,
+    resume: "Le théâtre romain au mur de scène le mieux conservé, et son arc de triomphe." },
+  { id: "val-de-loire", nom: "Val de Loire entre Sully-sur-Loire et Chalonnes", annee: 2000, type: "culturel", region: "Centre-Val de Loire", lat: 47.3900, lng: 0.6800, unescoId: 933,
+    resume: "Paysage culturel vivant, des châteaux de la Loire aux villes et villages ligériens." },
+  { id: "carcassonne", nom: "Ville fortifiée historique de Carcassonne", annee: 1997, type: "culturel", region: "Occitanie", lat: 43.2061, lng: 2.3639, unescoId: 345,
+    resume: "La plus vaste cité fortifiée d'Europe, restaurée au XIXe siècle par Viollet-le-Duc." },
+  { id: "golfe-porto", nom: "Golfe de Porto : Calanche de Piana, golfe de Girolata, réserve de Scandola", annee: 1983, type: "naturel", region: "Corse", lat: 42.3550, lng: 8.6000, unescoId: 258,
+    villages: ["piana"],
+    resume: "Falaises de granit rouge, criques et réserve naturelle marine du littoral corse." },
+  { id: "lagons-nc", nom: "Lagons de Nouvelle-Calédonie", annee: 2008, type: "naturel", region: "Nouvelle-Calédonie", lat: -20.9000, lng: 165.5000, unescoId: 1115,
+    resume: "Récifs coralliens et écosystèmes lagonaires d'une biodiversité exceptionnelle." },
+  { id: "reunion", nom: "Pitons, cirques et remparts de l'île de La Réunion", annee: 2010, type: "naturel", region: "La Réunion", lat: -21.1000, lng: 55.4700, unescoId: 1317,
+    resume: "Cœur du parc national : pitons volcaniques, cirques vertigineux et forêts primaires." },
+  { id: "mont-perdu", nom: "Pyrénées – Mont-Perdu", annee: 1997, type: "mixte", region: "Occitanie", lat: 42.6800, lng: 0.0330, unescoId: 773, transfrontalier: true,
+    resume: "Massif calcaire partagé avec l'Espagne : cirque de Gavarnie, canyons et pastoralisme." },
+  { id: "bassin-minier", nom: "Bassin minier du Nord-Pas-de-Calais", annee: 2012, type: "culturel", region: "Hauts-de-France", lat: 50.4300, lng: 2.8300, unescoId: 1360,
+    resume: "Paysage façonné par trois siècles d'extraction du charbon : terrils, fosses et corons." },
+  { id: "chauvet", nom: "Grotte ornée du Pont-d'Arc, dite grotte Chauvet", annee: 2014, type: "culturel", region: "Auvergne-Rhône-Alpes", lat: 44.3877, lng: 4.4160, unescoId: 1426,
+    resume: "Les plus anciens dessins figuratifs connus de l'humanité (env. 36 000 ans)." },
+  { id: "climats-bourgogne", nom: "Climats du vignoble de Bourgogne", annee: 2015, type: "culturel", region: "Bourgogne-Franche-Comté", lat: 47.0246, lng: 4.8399, unescoId: 1425,
+    resume: "Mosaïque de parcelles viticoles délimitées des côtes de Nuits et de Beaune." },
+  { id: "champagne", nom: "Coteaux, maisons et caves de Champagne", annee: 2015, type: "culturel", region: "Grand Est", lat: 49.0450, lng: 3.9600, unescoId: 1465,
+    resume: "Berceau de l'élaboration du vin de Champagne : coteaux, crayères et avenues de maisons." },
+  { id: "le-corbusier", nom: "L'œuvre architecturale de Le Corbusier", annee: 2016, type: "culturel", region: "Plusieurs régions", lat: 47.7042, lng: 6.6217, unescoId: 1321, transfrontalier: true,
+    resume: "Bien en série de 7 pays (villa Savoye, Ronchamp, Firminy…) témoin du Mouvement moderne." },
+  { id: "taputapuatea", nom: "Taputapuātea", annee: 2017, type: "culturel", region: "Polynésie française", lat: -16.8300, lng: -151.4000, unescoId: 1528,
+    resume: "Marae de Raiatea, centre politique, cérémoniel et funéraire du monde polynésien." },
+  { id: "chaine-puys", nom: "Chaîne des Puys – faille de Limagne", annee: 2018, type: "naturel", region: "Auvergne-Rhône-Alpes", lat: 45.7722, lng: 2.9644, unescoId: 1434,
+    resume: "Alignement de 80 volcans illustrant le phénomène de rifting continental." },
+  { id: "terres-australes", nom: "Terres et mers australes françaises", annee: 2019, type: "naturel", region: "Terres australes et antarctiques françaises", lat: -49.3500, lng: 69.3500, unescoId: 1603,
+    resume: "Îles subantarctiques (Crozet, Kerguelen…), sanctuaire d'oiseaux marins et de manchots." },
+  { id: "villes-thermales", nom: "Grandes villes d'eaux d'Europe (Vichy)", annee: 2021, type: "culturel", region: "Auvergne-Rhône-Alpes", lat: 46.1270, lng: 3.4200, unescoId: 1613, transfrontalier: true,
+    resume: "Vichy, composante française de 11 villes thermales européennes du grand thermalisme." },
+  { id: "cordouan", nom: "Phare de Cordouan", annee: 2021, type: "culturel", region: "Nouvelle-Aquitaine", lat: 45.5850, lng: -1.1750, unescoId: 1625,
+    resume: "Le « Versailles des mers », plus ancien phare de France encore en activité." },
+  { id: "nice", nom: "Nice, ville de la villégiature d'hiver de Riviera", annee: 2021, type: "culturel", region: "Provence-Alpes-Côte d'Azur", lat: 43.6959, lng: 7.2716, unescoId: 1635,
+    resume: "Ville née du tourisme hivernal international, promenade des Anglais et architecture climatique." },
+  { id: "forets-hetres", nom: "Forêts primaires et anciennes de hêtres", annee: 2021, type: "naturel", region: "Plusieurs régions", lat: 42.4700, lng: 3.0200, unescoId: 1133, transfrontalier: true,
+    resume: "Composantes françaises (Massane, Grande Sassière, Chapître) d'un vaste bien européen en série." },
+  { id: "sites-1418", nom: "Sites funéraires et mémoriels de la Première Guerre mondiale (Front Ouest)", annee: 2023, type: "culturel", region: "Hauts-de-France", lat: 50.4000, lng: 2.7200, unescoId: 1567, transfrontalier: true,
+    resume: "139 cimetières et mémoriaux du front ouest, bien en série partagé avec la Belgique." },
+  { id: "maison-carree", nom: "La Maison carrée de Nîmes", annee: 2023, type: "culturel", region: "Occitanie", lat: 43.8383, lng: 4.3560, unescoId: 1569,
+    resume: "Temple romain parmi les mieux conservés au monde, modèle de l'architecture augustéenne." },
+  { id: "montagne-pelee", nom: "Volcans et forêts de la montagne Pelée et pitons du Nord de la Martinique", annee: 2023, type: "naturel", region: "Martinique", lat: 14.8090, lng: -61.1650, unescoId: 1657,
+    resume: "Zone volcanique majeure et forêts abritant une faune et une flore endémiques." },
+  { id: "marquises", nom: "Te Henua Enata – Les îles Marquises", annee: 2024, type: "mixte", region: "Polynésie française", lat: -9.7800, lng: -139.0400, unescoId: 1707,
+    resume: "Archipel-sanctuaire de biodiversité et haut lieu du patrimoine culturel polynésien." }
+];

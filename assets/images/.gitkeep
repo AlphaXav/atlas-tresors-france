@@ -1,0 +1,5 @@
+Déposez ici vos photos de villages, nommées d'après l'id du village : <id>.jpg
+(ex. riquewihr.jpg). Voir le README, section « Photos réelles ».
+
+- Génération automatique : python3 tools/fetch_photos.py
+- Sans photo, l'application affiche une « planche » SVG générée (100 % hors-ligne).
