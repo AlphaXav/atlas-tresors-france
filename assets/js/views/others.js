@@ -253,7 +253,7 @@ ATLAS.views.stats = (() => {
       [n, "villages référencés"], [moy, "note moyenne / 100"], [cinq, "villages 5 étoiles"],
       [regions, "régions couvertes"], [depts, "départements"], [chateaux, "villages à château"],
       [popMoy.toLocaleString("fr-FR"), "population moyenne"], [(ATLAS.roadtrips||[]).length, "road trips"],
-      [(ATLAS.unesco||[]).length, "sites UNESCO"]
+      [(ATLAS.unesco||[]).length, "sites UNESCO"], [(ATLAS.vpah||[]).length, "villes d'art et d'histoire"]
     ].map(([b, s]) => `<div class="stat-card"><b>${b}</b><span>${esc(s)}</span></div>`).join("");
 
     // répartition par région

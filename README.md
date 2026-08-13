@@ -69,9 +69,9 @@ photo requise, fonctionne hors-ligne). Pour afficher de vraies photos, trois voi
 **A. Génération automatique (recommandée).** Sur votre machine :
 ```bash
 cd atlas
-python3 tools/fetch_photos.py            # jusqu'à 5 photos libres par village
-python3 tools/fetch_photos.py --limit 5  # test rapide
-python3 tools/fetch_photos.py --max 3    # 3 photos max par village
+python3 tools/fetch_photos.py            # jusqu'à 3 photos libres par village
+python3 tools/fetch_photos.py --limit 5  # test rapide (5 villages)
+python3 tools/fetch_photos.py --max 5    # jusqu'à 5 photos par village
 ```
 Le script cherche les images sur **Wikimedia Commons** (banque 100 % sous licence
 libre), télécharge jusqu'à 5 photos par village (`<id>1.jpg` … `<id>5.jpg`), écrit
@@ -79,6 +79,56 @@ les licences dans `assets/images/CREDITS.md`, mémorise les crédits dans
 `assets/images/credits.json` (pour des relances rapides) et régénère `data/photos.js`
 sous forme de **manifeste-tableau** (carrousel + lightbox automatiques). Aucune
 dépendance à installer.
+
+**A bis. Génération automatique via Pixabay.** Alternative à Wikimedia, avec des
+images déjà optimisées et une licence simple (réutilisation libre, sans
+attribution obligatoire). Nécessite une **clé API Pixabay** gratuite
+(https://pixabay.com/api/docs/) :
+```bash
+cd atlas
+export PIXABAY_API_KEY="votreCle"        # ou --key votreCle
+python3 tools/fetch_photos_pixabay.py            # 4 photos ~640 px par village
+python3 tools/fetch_photos_pixabay.py --large    # ~1280 px (plus lourdes)
+python3 tools/fetch_photos_pixabay.py --limit 3  # essai rapide
+```
+Par défaut : **4 photos** par village en version légère (~640 px). Le script est
+incrémental (ne re-télécharge pas l'existant sans `--force`), régénère
+`data/photos.js` et écrit les crédits. Réserve : Pixabay étant une banque de
+stock, les petits villages peuvent recevoir des images génériques — vérifiez le
+rendu et complétez à la main si besoin (voie C). Le script Wikimedia
+(`tools/fetch_photos.py`) reste disponible et cible mieux les communes.
+
+**A ter. Génération automatique via Pexels.** Autre banque libre, bonne qualité
+photographique. Nécessite une **clé API Pexels** gratuite et instantanée
+(https://www.pexels.com/api/, « Get Started »). Authentification par en-tête :
+```bash
+cd atlas
+export PEXELS_API_KEY="votreCle"         # ou --key votreCle
+python3 tools/fetch_photos_pexels.py             # 4 photos ~1200 px (taille landscape)
+python3 tools/fetch_photos_pexels.py --size large   # ~940 px (plus léger)
+python3 tools/fetch_photos_pexels.py --large        # ~1880 px
+python3 tools/fetch_photos_pexels.py --limit 3      # essai rapide
+```
+Quota Pexels : **200 requêtes/heure, 20 000/mois** — le script respecte le
+compteur et patiente si besoin ; pour les 362 communes, lancez par lots
+(`--limit`) au besoin. Crédit du photographe conservé (« © Auteur / Pexels »).
+Même réserve de pertinence que Pixabay pour les petits villages.
+
+**A quater. Génération automatique via Unsplash.** Banque de photos de grande
+qualité. Créez une application sur https://unsplash.com/developers et copiez
+l'« Access Key » :
+```bash
+cd atlas
+export UNSPLASH_ACCESS_KEY="votreCle"    # ou --key votreCle
+python3 tools/fetch_photos_unsplash.py --limit 45   # un lot (quota Demo)
+python3 tools/fetch_photos_unsplash.py --small      # ~400 px (léger)
+python3 tools/fetch_photos_unsplash.py --large      # pleine largeur
+```
+⚠ **Quota Demo = 50 requêtes/heure** (par défaut à la création de l'app) :
+traitez par lots (`--limit ~45`) ou demandez le passage en « Production »
+(5000 req/h) depuis le tableau de bord Unsplash. Le script respecte les règles
+de l'API : **attribution** (« © Auteur / Unsplash » + lien avec paramètres UTM)
+et déclenchement du **download event** pour chaque photo utilisée.
 
 **B. Vos propres photos, par convention.** Déposez `assets/images/<id>.jpg` (l'`id`
 est celui du village dans `data/villages.js`), puis activez la détection dans
@@ -94,6 +144,17 @@ window.ATLAS.photos["gordes"] = {
   credit: "© Auteur / Wikimedia Commons (CC BY-SA 4.0)",
   link: "https://commons.wikimedia.org/wiki/File:Gordes.jpg"
 };
+```
+
+**Attribution (important).** Chaque photo est stockée avec son attribution
+structurée : `credit` (auteur / source), `link` (image originale), `license`
+(nom court) et `licenseUrl` (lien vers le texte de la licence). L'application
+affiche l'ensemble sous la photo (fiche et plein écran), avec liens cliquables —
+condition nécessaire pour respecter les licences Creative Commons BY / BY-SA.
+Après tout téléchargement, ou pour régénérer un `data/photos.js` conforme à
+partir des crédits déjà enregistrés :
+```bash
+python3 tools/build_photos_from_credits.py
 ```
 
 Dans tous les cas, si une image manque ou échoue à charger, la planche SVG
@@ -179,6 +240,36 @@ badge et son bloc.
 
 ---
 
+## Villes d'art et d'histoire
+
+`data/vpah.js` recense les **210 communes labellisées « Ville d'art et
+d'histoire »** par le ministère de la Culture, réparties sur 14 régions. Les
+**« Pays d'art et d'histoire »** (territoires intercommunaux) sont volontairement
+**exclus** : seules les communes figurent dans la base.
+
+Ce référentiel alimente :
+
+- un onglet **« Villes d'art et d'histoire »** : synthèse chiffrée, filtre par
+  région et annuaire (chaque commune renvoie vers sa fiche Atlas si elle existe,
+  sinon vers une recherche cartographique) ;
+- un **badge 🏛️ Ville d'art et d'histoire** sur la vignette et la fiche des
+  villages de la base concernés, plus un filtre « Distinctions » associé.
+
+Chaque commune possède un `id` (slug), un `nom` et une `region`. Le badge est
+attribué automatiquement à tout village de `data/villages.js` dont l'`id`
+correspond à celui d'une commune labellisée (ou via le champ optionnel `village`
+pour les cas de communes fusionnées, ex. Sainte-Suzanne). La plupart de ces
+communes ayant été ajoutées à la base (voir plus bas), **176 fiches** portent
+désormais le badge. La source est le réseau des Villes et Pays d'art et
+d'histoire (relevé 2025) ; la liste évolue au fil des labellisations.
+
+Les **grandes métropoles** (Marseille, Lille, Bordeaux, Toulouse, Nantes…),
+l'agglomération de Saint-Quentin-en-Yvelines et deux chefs-lieux réunionnais
+(Saint-Denis, Saint-Paul) restent listés dans l'annuaire mais n'ont pas de fiche
+détaillée, la base privilégiant les villes petites et moyennes.
+
+---
+
 ## Ajouter / modifier un village
 
 Dans `data/villages.js`, copiez un bloc et gardez un `id` unique (slug en
@@ -204,7 +295,9 @@ de l'itinéraire concerné (`data/roadtrips.js`) et l'id du road trip dans le ch
 - **Éditoriales** : toutes les notes chiffrées. Elles constituent une base de
   travail cohérente, pas un classement officiel.
 
-La base livrée compte **197 villages** couvrant 14 régions et 73 départements, et
+La base livrée compte **362 communes** (197 plus beaux villages et cités
+historiques, complétés par 165 « Villes d'art et d'histoire »), couvrant 15
+régions (métropole et outre-mer), et
 l'architecture est dimensionnée pour monter à 100+ sans modification du code.
 
 ---

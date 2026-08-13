@@ -3,9 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Atlas des Trésors de France — le guide interactif des plus beaux villages de France pour préparer vacances, road trips et week-ends." />
+  <title>Atlas des Trésors de France — villages, sites UNESCO &amp; villes d'art et d'histoire</title>
+  <meta name="description" content="Le guide interactif des plus beaux villages, des sites du patrimoine mondial de l'UNESCO et des villes d'art et d'histoire de France : 362 communes, fiches détaillées, carte et road trips clés en main." />
   <meta name="theme-color" content="#16302E" />
-  <title>Atlas des Trésors de France</title>
+
+  <!-- ============ SEO ============ -->
+  <!-- URL de publication : https://atlas-tresors-france.pages.dev/ (Cloudflare Pages).
+       À mettre à jour ici (canonical, og:url, og:image, twitter:image) en cas de changement de domaine. -->
+  <meta name="author" content="Xavier Maufrais" />
+  <meta name="keywords" content="plus beaux villages de France, patrimoine mondial UNESCO, villes d'art et d'histoire, road trips, tourisme, patrimoine, guide de voyage" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://atlas-tresors-france.pages.dev/" />
+
+  <!-- ============ Open Graph (Facebook, LinkedIn, WhatsApp…) ============ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Atlas des Trésors de France" />
+  <meta property="og:title" content="Atlas des Trésors de France" />
+  <meta property="og:description" content="Le guide interactif des plus beaux villages, sites UNESCO et villes d'art et d'histoire de France : fiches, carte et road trips." />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:url" content="https://atlas-tresors-france.pages.dev/" />
+  <meta property="og:image" content="https://atlas-tresors-france.pages.dev/assets/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Atlas des Trésors de France — villages de caractère, sites UNESCO et villes d'art et d'histoire" />
+
+  <!-- ============ Twitter / X Card ============ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Atlas des Trésors de France" />
+  <meta name="twitter:description" content="Le guide interactif des plus beaux villages, sites UNESCO et villes d'art et d'histoire de France." />
+  <meta name="twitter:image" content="https://atlas-tresors-france.pages.dev/assets/og-image.png" />
+  <meta name="twitter:image:alt" content="Atlas des Trésors de France" />
 
   <!-- Polices (chargées en ligne ; repli système hors connexion) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -123,6 +151,18 @@
       <div class="unesco-grid" id="unesco-list"></div>
     </section>
 
+    <!-- ===================== VUE VILLES D'ART ET D'HISTOIRE ===================== -->
+    <section id="view-vpah" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Label national</span>
+        <h1>Villes d'<em>art et d'histoire</em></h1>
+        <p>Les communes labellisées « Ville d'art et d'histoire » par le ministère de la Culture (les « Pays » intercommunaux sont exclus). Filtrez par région ; les villages de l'Atlas concernés sont mis en avant.</p>
+      </div>
+      <div class="stat-grid" id="vpah-stats"></div>
+      <div class="unesco-tabs" id="vpah-tabs"></div>
+      <div id="vpah-list"></div>
+    </section>
+
     <!-- ===================== VUE CLASSEMENTS ===================== -->
     <section id="view-rankings" class="view">
       <div class="view-head">
@@ -158,7 +198,69 @@
       <div id="favoris-list"></div>
     </section>
 
+    <!-- ===================== VUE MENTIONS LÉGALES ===================== -->
+    <section id="view-legal" class="view">
+      <div class="view-head">
+        <span class="eyebrow">Informations légales</span>
+        <h1>Mentions légales</h1>
+        <p>Conformément à l'article 1-1 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), modifiée par la loi n° 2024-449 du 21 mai 2024 (dite « SREN »).</p>
+      </div>
+      <div class="legal">
+        <h2>Éditeur du site</h2>
+        <p>Le site « <strong>Atlas des Trésors de France</strong> » est édité par <strong>Xavier Maufrais</strong>, personne physique, dans le cadre d'un projet personnel à but non lucratif.<br>
+        Contact : <a href="mailto:xavier.maufrais@gmail.com">xavier.maufrais@gmail.com</a></p>
+        <p class="muted">S'agissant d'un site non professionnel édité par un particulier, et conformément au II de l'article 1-1 de la LCEN, l'adresse postale et le numéro de téléphone de l'éditeur ne sont pas rendus publics. Ces informations sont détenues par l'hébergeur, qui peut les communiquer aux autorités judiciaires sur réquisition.</p>
+
+        <h2>Directeur de la publication</h2>
+        <p>Xavier Maufrais.</p>
+
+        <h2>Hébergeur</h2>
+        <p><strong>Cloudflare, Inc.</strong> — service Cloudflare Pages<br>
+        101 Townsend Street, San Francisco, CA 94107, États-Unis<br>
+        Téléphone : +1 888 993 5273 — Site&nbsp;: <a href="https://www.cloudflare.com" target="_blank" rel="noopener">cloudflare.com</a></p>
+        <p class="muted">Sous-traitants de stockage : Cloudflare, Inc. stocke et diffuse les fichiers du site publié (pages, données et images) via son réseau. Le code source du site est quant à lui hébergé chez <strong>GitHub, Inc.</strong> (88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis), dépôt à partir duquel Cloudflare Pages met le site en ligne automatiquement.</p>
+
+        <h2>Ressources et services tiers</h2>
+        <p>Pour son fonctionnement, le site fait appel à quelques ressources externes qui, lors de leur chargement, peuvent recevoir l'adresse IP du visiteur :</p>
+        <ul>
+          <li><strong>Google Fonts</strong> (Google Ireland Ltd.) — chargement des polices Fraunces et Hanken Grotesk (repli sur des polices système hors connexion).</li>
+          <li><strong>OpenStreetMap France</strong> et les contributeurs OpenStreetMap — tuiles de la carte interactive (chargées uniquement à l'ouverture de l'onglet « Carte »).</li>
+          <li><strong>unpkg / Cloudflare</strong> — distribution de la bibliothèque cartographique Leaflet.</li>
+        </ul>
+        <p>Les photographies éventuellement affichées sont téléchargées et hébergées avec le site : aucun appel externe n'est effectué au moment de la consultation. Leurs auteurs et licences sont indiqués sous chaque image et dans le fichier <code>assets/images/CREDITS.md</code>.</p>
+
+        <h2>Données personnelles et cookies</h2>
+        <p>Le site <strong>ne collecte aucune donnée personnelle</strong> et ne repose sur aucun serveur applicatif : il n'y a ni compte, ni formulaire, ni mesure d'audience, ni cookie publicitaire ou de traçage.</p>
+        <p>Seul un <strong>stockage local</strong> (« localStorage ») est utilisé pour mémoriser, sur votre appareil uniquement, vos favoris et votre préférence de thème (clair/sombre). Ces informations ne quittent jamais votre navigateur et peuvent être supprimées à tout moment en effaçant les données du site. Ce stockage étant strictement nécessaire au fonctionnement demandé, il ne requiert pas de consentement préalable au sens des recommandations de la CNIL.</p>
+        <p>Aucun traitement de données n'étant réalisé par l'éditeur, les droits d'accès, de rectification et d'effacement prévus par le RGPD s'exercent, le cas échéant, directement auprès des services tiers mentionnés ci-dessus.</p>
+
+        <h2>Propriété intellectuelle</h2>
+        <p>Les textes éditoriaux (notices, descriptions) et la présentation du site sont l'œuvre de l'éditeur. Les données factuelles (localisation, patrimoine) proviennent de sources publiques. Les photographies demeurent la propriété de leurs auteurs et sont soumises à leurs licences respectives (voir les crédits).</p>
+        <p>Les appellations et labels cités — « Les Plus Beaux Villages de France », « Village préféré des Français », « Ville et Pays d'art et d'histoire », patrimoine mondial de l'UNESCO — ainsi que les marques associées restent la propriété de leurs titulaires. Ce site est un projet <strong>indépendant</strong>, sans lien ni affiliation avec ces organismes.</p>
+
+        <h2>Responsabilité</h2>
+        <p>Les notes, étoiles et appréciations sont éditoriales et subjectives ; elles ne constituent pas un classement officiel. Les informations factuelles sont fournies de bonne foi, sans garantie d'exhaustivité ni d'absence d'erreur. L'éditeur ne saurait être tenu responsable de l'usage fait de ces informations, ni du contenu des sites tiers accessibles par des liens.</p>
+
+        <h2>Crédits</h2>
+        <p>Polices Fraunces et Hanken Grotesk (SIL Open Font License) ; cartographie Leaflet et fond de carte © les contributeurs OpenStreetMap (licence ODbL) ; photographies issues, selon le cas, de Wikimedia Commons, Pixabay, Pexels ou Unsplash, sous leurs licences respectives.</p>
+        <p>Chaque photographie affiche, sur sa fiche et en plein écran, le <strong>nom de son auteur</strong>, sa <strong>licence</strong> (avec lien vers le texte de celle-ci) et un <strong>lien vers l'image originale</strong>, conformément aux conditions de réutilisation (notamment les licences Creative Commons BY / BY-SA). La liste complète figure dans <code>assets/images/CREDITS.md</code>.</p>
+
+        <p class="muted">Dernière mise à jour : août 2026.</p>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ===================== PIED DE PAGE ===================== -->
+  <footer class="site-footer">
+    <div class="wrap site-footer__inner">
+      <span class="site-footer__copy">© 2026 Xavier Maufrais — Atlas des Trésors de France</span>
+      <nav class="site-footer__links" aria-label="Liens légaux">
+        <a href="#legal" id="footer-legal">Mentions légales</a>
+      </nav>
+      <span class="muted">Projet indépendant, sans affiliation officielle.</span>
+    </div>
+  </footer>
 
   <!-- ===================== MODALE FICHE ===================== -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Fiche du village">
@@ -193,6 +295,7 @@
   <script src="data/officiel.js"></script>
   <script src="data/vpf.js"></script>
   <script src="data/unesco.js"></script>
+  <script src="data/vpah.js"></script>
 
   <!-- 2) NOYAU -->
   <!-- Détection automatique des images déposées dans assets/images/ -->
@@ -205,6 +308,7 @@
   <script src="assets/js/views/villages.js"></script>
   <script src="assets/js/views/others.js"></script>
   <script src="assets/js/views/unesco.js"></script>
+  <script src="assets/js/views/vpah.js"></script>
 
   <!-- 4) APPLICATION -->
   <script src="assets/js/app.js"></script>

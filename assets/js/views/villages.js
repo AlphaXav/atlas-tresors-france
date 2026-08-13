@@ -22,6 +22,7 @@ ATLAS.views.villages = (() => {
         <button class="card__fav ${fav ? "is-fav" : ""}" aria-label="${fav ? "Retirer des favoris" : "Ajouter aux favoris"}" data-fav="${v.id}">${I.heart}</button>
         ${vpf ? `<span class="card__vpf" title="Village préféré des Français ${vpf}">${I.trophy}<b>${vpf}</b></span>` : ""}
         ${ATLAS.estUnesco(v) ? `<span class="card__unesco" title="Patrimoine mondial de l'UNESCO">${I.globe}</span>` : ""}
+        ${ATLAS.estVpah(v) ? `<span class="card__vpah" title="Ville d'art et d'histoire">${I.landmark}</span>` : ""}
         ${ATLAS.photoCount(v) > 1 ? `<span class="card__multi" title="${ATLAS.photoCount(v)} photos">${I.images || ""}<b>${ATLAS.photoCount(v)}</b></span>` : ""}
       </div>
       <div class="card__body">
@@ -110,6 +111,7 @@ ATLAS.views.villages = (() => {
     const officielUrl = ATLAS.officielUrl(v);
     const vpf = ATLAS.vpfInfo(v);
     const unescoSites = ATLAS.unescoFor(v);
+    const vpah = ATLAS.vpahForVillage(v);
 
     panel.innerHTML = `
       <div class="fiche">
@@ -125,7 +127,7 @@ ATLAS.views.villages = (() => {
         <div class="fiche__body">
           <div class="fiche__topline">
             <div class="seal" style="--s:64px"><b>${v.note100}</b><span>/ 100</span></div>
-            <div class="chips">${officielUrl ? `<span class="chip chip--label" title="Membre officiel de l'association">✦ Plus Beaux Villages de France</span>` : ""}${vpf ? (vpf.rang === 1 ? `<span class="chip chip--vpf" title="Émission de Stéphane Bern">🏆 Village préféré des Français ${vpf.annee}</span>` : `<span class="chip chip--vpfpart" title="A concouru au Village préféré des Français ${vpf.annee}">★ Finaliste Village préféré ${vpf.annee}${vpf.rang ? ` · ${vpf.rang}ᵉ` : ""}</span>`) : ""}${unescoSites.length ? `<span class="chip chip--unesco" title="Patrimoine mondial de l'UNESCO">🌍 Patrimoine mondial UNESCO</span>` : ""}${(v.tags || []).map(tagChip).join("")}</div>
+            <div class="chips">${officielUrl ? `<span class="chip chip--label" title="Membre officiel de l'association">✦ Plus Beaux Villages de France</span>` : ""}${vpf ? (vpf.rang === 1 ? `<span class="chip chip--vpf" title="Émission de Stéphane Bern">🏆 Village préféré des Français ${vpf.annee}</span>` : `<span class="chip chip--vpfpart" title="A concouru au Village préféré des Français ${vpf.annee}">★ Finaliste Village préféré ${vpf.annee}${vpf.rang ? ` · ${vpf.rang}ᵉ` : ""}</span>`) : ""}${unescoSites.length ? `<span class="chip chip--unesco" title="Patrimoine mondial de l'UNESCO">🌍 Patrimoine mondial UNESCO</span>` : ""}${vpah ? `<span class="chip chip--vpah" title="Label national du ministère de la Culture">🏛️ Ville d'art et d'histoire</span>` : ""}${(v.tags || []).map(tagChip).join("")}</div>
           </div>
 
           <div class="kv">
@@ -148,6 +150,9 @@ ATLAS.views.villages = (() => {
               <b>${esc(s.nom)}</b>
               <span class="fiche-unesco__meta">Inscrit en ${s.annee} · ${esc(s.resume)}</span>
             </a>`).join("")}</div>` : ""}
+
+          ${vpah ? `<h4>${I.landmark} Ville d'art et d'histoire</h4>
+          <p>Commune labellisée <b>« Ville d'art et d'histoire »</b> par le ministère de la Culture, au titre de la richesse et de la valorisation de son patrimoine (région ${esc(vpah.region)}).</p>` : ""}
 
           <h4>${I.star} Notation détaillée</h4>
           <div class="ratings">

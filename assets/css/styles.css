@@ -26,6 +26,8 @@
   --wax-deep:   #6E1F1C;
   --unesco:     #2B5B84;   /* bleu UNESCO — patrimoine mondial */
   --unesco-soft:#7FA8CB;
+  --vpah:       #7A3B5E;   /* prune — Ville d'art et d'histoire */
+  --vpah-soft:  #C58AA6;
 
   /* Sémantique (réassigné en mode sombre) */
   --bg:         var(--paper);
@@ -270,8 +272,13 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .layout { display: grid; grid-template-columns: 264px 1fr; gap: 2rem; align-items: start; }
 .filters {
   position: sticky; top: calc(var(--header-h) + 1rem);
+  /* le panneau devient son propre conteneur défilant : tous les groupes de
+     filtres restent atteignables même si le panneau dépasse la hauteur d'écran */
+  max-height: calc(100vh - var(--header-h) - 2rem);
+  overflow-y: auto; overscroll-behavior: contain;
   background: var(--bg-elev); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 1.1rem 1.2rem; box-shadow: var(--shadow);
+  scrollbar-width: thin;
 }
 .filters h3 { font-size: var(--step-1); display: flex; align-items: center; justify-content: space-between; }
 .filters__reset { font-size: .72rem; font-weight: 700; color: var(--seal); letter-spacing: .04em; text-transform: uppercase; }
@@ -499,7 +506,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
  * -------------------------------------------------------------------------- */
 @media (max-width: 1000px) {
   .layout { grid-template-columns: 1fr; }
-  .filters { position: relative; top: 0; }
+  .filters { position: relative; top: 0; max-height: none; overflow: visible; }
   .filters__body { display: none; }
   .filters.is-open .filters__body { display: block; }
   .filters h3 { cursor: pointer; }
@@ -569,6 +576,37 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
   .rt-bar, .rt-dots { display: none; }
   .view { display: block !important; }
 }
+
+/* ============================================================================
+ * PIED DE PAGE + MENTIONS LÉGALES
+ * ========================================================================== */
+.site-footer {
+  margin-top: 3rem; border-top: 1px solid var(--line);
+  background: var(--bg-elev); padding: 1.4rem 0;
+}
+.site-footer__inner {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.2rem;
+  font-size: var(--step--1); color: var(--text-muted);
+}
+.site-footer__copy { font-family: var(--font-display); }
+.site-footer__links { margin-left: auto; }
+.site-footer__links a { color: var(--accent); font-weight: 650; }
+.site-footer__links a:hover { text-decoration: underline; }
+@media (max-width: 640px) { .site-footer__links { margin-left: 0; } }
+
+.legal { max-width: 760px; }
+.legal h2 {
+  font-family: var(--font-display); font-size: var(--step-1);
+  margin: 1.8rem 0 .5rem; padding-top: .4rem; border-top: 1px solid var(--line);
+}
+.legal h2:first-of-type { border-top: 0; padding-top: 0; margin-top: .5rem; }
+.legal p { margin: .5rem 0; line-height: 1.6; }
+.legal ul { margin: .5rem 0 .5rem 1.1rem; }
+.legal li { margin: .3rem 0; line-height: 1.55; }
+.legal a { color: var(--accent); font-weight: 600; }
+.legal a:hover { text-decoration: underline; }
+.legal .muted { font-size: var(--step--1); color: var(--text-muted); }
+.legal code { font-size: .85em; background: var(--bg-sunk); padding: .1em .35em; border-radius: 4px; }
 
 /* ============================================================================
  * PATRIMOINE MONDIAL DE L'UNESCO
@@ -660,3 +698,39 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
   letter-spacing: .03em; color: var(--unesco); margin-bottom: .2rem;
 }
 [data-theme="dark"] .map-pop__tag { color: var(--unesco-soft); }
+
+/* ============================================================================
+ * VILLE D'ART ET D'HISTOIRE (VPAH)
+ * ========================================================================== */
+/* Puce sur la vignette (à droite de la puce UNESCO / du numéro) */
+.card__vpah {
+  position: absolute; top: .55rem; left: 4.4rem; z-index: 2;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-grid; place-items: center;
+  background: var(--vpah); color: #fff; border: 1px solid rgba(255,255,255,.35);
+  box-shadow: 0 2px 7px rgba(0,0,0,.28);
+}
+.card__vpah svg { width: 15px; height: 15px; }
+/* si pas de badge UNESCO, la puce VPAH prend la place à droite du numéro */
+.card__media:not(:has(.card__unesco)) .card__vpah { left: 2.5rem; }
+
+/* Chip VPAH (fiche + filtres) */
+.chip--vpah { color: #fff; background: var(--vpah); border-color: var(--vpah); font-weight: 700; }
+[data-theme="dark"] .chip--vpah { color: #1c0f16; background: var(--vpah-soft); border-color: var(--vpah-soft); }
+
+/* Annuaire par région */
+.vpah-block { margin-bottom: 1.8rem; }
+.vpah-wrap { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
+.vpah-pill {
+  display: inline-flex; align-items: center; gap: .32rem;
+  padding: .4rem .75rem; border-radius: 999px; font-size: var(--step--1); font-weight: 600;
+  border: 1px solid var(--line); background: var(--bg-elev); color: var(--text);
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.vpah-pill:hover { border-color: var(--vpah); }
+.vpah-pill svg { width: 14px; height: 14px; }
+.vpah-pill--atlas {
+  color: #fff; background: var(--vpah); border-color: var(--vpah); font-weight: 700;
+}
+[data-theme="dark"] .vpah-pill--atlas { color: #1c0f16; background: var(--vpah-soft); border-color: var(--vpah-soft); }
+.vpah-pill--atlas:hover { filter: brightness(1.06); }

@@ -19,7 +19,7 @@ ATLAS.store = (() => {
     filters: {
       region: "", departement: "", etoilesMin: 0, noteMin: 0,
       medievalMin: 0, gastronomieMin: 0, paysagesMin: 0,
-      pbvf: false, vpf: false, vpfpart: false, unesco: false,
+      pbvf: false, vpf: false, vpfpart: false, unesco: false, vpah: false,
       tags: new Set()  // chateau, fortifie, vignoble, montagne, riviere, mer, meconnu, touristique
     },
     listeners: new Set(),
@@ -51,7 +51,7 @@ ATLAS.store = (() => {
     s.has(tag) ? s.delete(tag) : s.add(tag); emit();
   };
   const resetFilters = () => {
-    state.filters = { region:"", departement:"", etoilesMin:0, noteMin:0, medievalMin:0, gastronomieMin:0, paysagesMin:0, pbvf:false, vpf:false, vpfpart:false, unesco:false, tags:new Set() };
+    state.filters = { region:"", departement:"", etoilesMin:0, noteMin:0, medievalMin:0, gastronomieMin:0, paysagesMin:0, pbvf:false, vpf:false, vpfpart:false, unesco:false, vpah:false, tags:new Set() };
     state.query = ""; emit();
   };
 
@@ -68,6 +68,7 @@ ATLAS.store = (() => {
     if (f.vpf && !ATLAS.estLaureatVpf(v)) return false;
     if (f.vpfpart && !ATLAS.vpfAnnee(v)) return false;
     if (f.unesco && !ATLAS.estUnesco(v)) return false;
+    if (f.vpah && !ATLAS.estVpah(v)) return false;
     if (f.region && v.region !== f.region) return false;
     if (f.departement && v.departement !== f.departement) return false;
     if (v.etoiles < f.etoilesMin) return false;

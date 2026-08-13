@@ -8,7 +8,7 @@ ATLAS.app = (() => {
   const store = ATLAS.store;
   const I = ATLAS.icons;
 
-  const VIEWS = ["villages", "map", "roadtrips", "unesco", "rankings", "stats", "favoris"];
+  const VIEWS = ["villages", "map", "roadtrips", "unesco", "vpah", "rankings", "stats", "favoris", "legal"];
   let current = "villages";
 
   /* ---- Routage ---- */
@@ -24,6 +24,7 @@ ATLAS.app = (() => {
     if (view === "map") ATLAS.views.map.mount();
     if (view === "roadtrips") ATLAS.views.roadtrips.render(arg);
     if (view === "unesco") ATLAS.views.unesco.render();
+    if (view === "vpah") ATLAS.views.vpah.render();
     if (view === "rankings") ATLAS.views.rankings.render();
     if (view === "stats") ATLAS.views.stats.render();
     if (view === "favoris") ATLAS.views.favoris.render();
@@ -34,6 +35,7 @@ ATLAS.app = (() => {
     const nav = [
       ["villages", "Villages", I.book], ["map", "Carte", I.map], ["roadtrips", "Road trips", I.route],
       ["unesco", "Patrimoine mondial", I.globe],
+      ["vpah", "Villes d'art et d'histoire", I.landmark],
       ["rankings", "Classements", I.trophy], ["stats", "Statistiques", I.chart]
     ];
     $("#nav").innerHTML = nav.map(([v, l]) => `<a class="nav__link" data-view="${v}" href="#${v}">${esc(l)}</a>`).join("");
@@ -42,6 +44,8 @@ ATLAS.app = (() => {
     $("#nav-toggle").addEventListener("click", () => $("#nav").classList.toggle("is-open"));
     $("#theme-toggle").addEventListener("click", () => store.toggleTheme());
     $("#fav-btn").addEventListener("click", () => go("favoris"));
+    const footerLegal = $("#footer-legal");
+    if (footerLegal) footerLegal.addEventListener("click", e => { e.preventDefault(); go("legal"); });
     $("#search-input").addEventListener("input", e => { store.setQuery(e.target.value); if (current !== "villages") go("villages"); });
   }
 
@@ -69,6 +73,7 @@ ATLAS.app = (() => {
         <label class="check"><input type="checkbox" data-flag="vpf"> 🏆 Lauréat Village préféré</label>
         <label class="check"><input type="checkbox" data-flag="vpfpart"> ★ A concouru au Village préféré</label>
         <label class="check"><input type="checkbox" data-flag="unesco"> 🌍 Patrimoine mondial UNESCO</label>
+        <label class="check"><input type="checkbox" data-flag="vpah"> 🏛️ Ville d'art et d'histoire</label>
       </div>
       <div class="filter-group">
         <div class="label">Région</div>

@@ -67,6 +67,7 @@ ATLAS.icons = (() => {
     chevronLeft:  s(`<path d="m15 18-6-6 6-6"/>`),
     chevronRight: s(`<path d="m9 18 6-6-6-6"/>`),
     globe:   s(`<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.7 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3Z"/>`),
+    landmark: s(`<path d="M4 21h16M5 21V10M9 21V10M15 21V10M19 21V10M4 10h16M12 3 3.5 7.5V9h17V7.5L12 3Z"/>`),
   };
 })();
 
@@ -142,7 +143,9 @@ ATLAS.plate = (v, w = 400, h = 300) => {
  * -------------------------------------------------------------------------- */
 ATLAS.config = Object.assign({ tryConventionImages: false, imageDir: "assets/images", imageExt: "jpg" }, ATLAS.config);
 
-ATLAS._normPhoto = (x) => typeof x === "string" ? { src: x, credit: "", link: "" } : { src: x.src, credit: x.credit || "", link: x.link || "" };
+ATLAS._normPhoto = (x) => typeof x === "string"
+  ? { src: x, credit: "", link: "", license: "", licenseUrl: "" }
+  : { src: x.src, credit: x.credit || "", link: x.link || "", license: x.license || "", licenseUrl: x.licenseUrl || "" };
 
 /* Liste des photos connues SANS sondage (manifeste, ou 1 candidat en convention). */
 ATLAS.photosFor = (v) => {
@@ -156,11 +159,22 @@ ATLAS.photoFor = (v) => ATLAS.photosFor(v)[0] || null;
 ATLAS.hasPhoto = (v) => ATLAS.photosFor(v).length > 0;
 ATLAS.photoCount = (v) => ATLAS.photosFor(v).length;
 
-/* Crédit formaté d'une photo (objet {src,credit,link}). */
+/* Crédit formaté d'une photo (objet {src,credit,link,license,licenseUrl}).
+ * Rend une attribution conforme : « Auteur / Source » (lien vers l'original)
+ * puis, séparé par « · », le nom de la licence (lien vers son texte). */
 ATLAS.creditHTML = (p) => {
-  if (!p || !p.credit) return "";
-  const txt = ATLAS.utils.esc(p.credit);
-  return p.link ? `<a href="${ATLAS.utils.esc(p.link)}" target="_blank" rel="noopener">${txt}</a>` : txt;
+  if (!p) return "";
+  const esc = ATLAS.utils.esc;
+  const parts = [];
+  if (p.credit) {
+    const txt = esc(p.credit);
+    parts.push(p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">${txt}</a>` : txt);
+  }
+  if (p.license) {
+    const lic = esc(p.license);
+    parts.push(p.licenseUrl ? `<a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener">${lic}</a>` : lic);
+  }
+  return parts.join(" · ");
 };
 ATLAS.photoCredit = (v) => ATLAS.creditHTML(ATLAS.photoFor(v)); // compat : crédit de la 1re photo
 
@@ -222,6 +236,13 @@ ATLAS.unescoUrl = (site) => site ? ATLAS.unescoBase + site.unescoId : null;
 ATLAS.unescoFor = (v) => (ATLAS.unesco || []).filter(s => (s.villages || []).includes(v.id));
 ATLAS.estUnesco = (v) => ATLAS.unescoFor(v).length > 0;
 ATLAS.unescoTypeLabel = (t) => ({ culturel: "Culturel", naturel: "Naturel", mixte: "Mixte" }[t] || t);
+
+/* ----------------------------------------------------------------------------
+ * LABEL « VILLE D'ART ET D'HISTOIRE » (réseau VPAH, ministère de la Culture)
+ * Un village porte le label si son id figure au champ "village" d'une commune.
+ * -------------------------------------------------------------------------- */
+ATLAS.vpahForVillage = (v) => (ATLAS.vpah || []).find(c => c.village === v.id || c.id === v.id) || null;
+ATLAS.estVpah = (v) => !!ATLAS.vpahForVillage(v);
 
 /* ----------------------------------------------------------------------------
  * LIGHTBOX — agrandissement plein écran, avec défilement si plusieurs photos.

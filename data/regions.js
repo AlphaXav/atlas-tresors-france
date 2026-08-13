@@ -15,5 +15,6 @@ window.ATLAS.regions = [
   { nom: "Pays de la Loire", emoji: "🌿", description: "Le Val de Loire et ses châteaux les pieds dans l'eau." },
   { nom: "Provence-Alpes-Côte d'Azur", emoji: "💜", description: "Villages perchés du Luberon, ocres, lavande et pierre dorée." },
   { nom: "Île-de-France", emoji: "⚜️", description: "Aux portes de Paris : châteaux troglodytiques et boucles de la Seine dans le Vexin." },
-  { nom: "La Réunion", emoji: "🌋", description: "Outre-mer : cases créoles et cirques volcaniques au cœur de l'océan Indien." }
+  { nom: "La Réunion", emoji: "🌋", description: "Outre-mer : cases créoles et cirques volcaniques au cœur de l'océan Indien." },
+  { nom: "Outre-Mer", emoji: "🌴", description: "Guadeloupe, Martinique, Guyane et La Réunion : patrimoine créole, volcans et forts entre mers tropicales." }
 ];

@@ -3,21 +3,21 @@
 """
 Atlas des Trésors de France — tools/fetch_photos.py
 -----------------------------------------------------------------------------
-Télécharge JUSQU'À 5 photos par village depuis Wikimedia Commons (banque
-d'images 100 % sous licence libre), les enregistre en <id>1.jpg … <id>5.jpg,
-écrit les crédits et régénère data/photos.js (manifeste en tableau).
+Télécharge JUSQU'À 3 photos par village depuis Wikimedia Commons (banque
+d'images 100 % sous licence libre), les enregistre en <id>1.jpg … <id>3.jpg,
+écrit les crédits (auteur + licence + lien) et régénère data/photos.js.
 
 À LANCER SUR VOTRE MACHINE (bibliothèque standard Python seule, rien à installer) :
 
     cd atlas
     python3 tools/fetch_photos.py --limit 3     # essai sur 3 villages
-    python3 tools/fetch_photos.py               # tous les villages
-    python3 tools/fetch_photos.py --max 3        # 3 photos max par village
+    python3 tools/fetch_photos.py               # tous les villages (3 photos)
+    python3 tools/fetch_photos.py --max 5        # jusqu'à 5 photos par village
     python3 tools/fetch_photos.py --force        # re-télécharge tout
     python3 tools/fetch_photos.py --insecure     # si erreur de certificat SSL (macOS)
 
 Résultat :
-    assets/images/<id>1.jpg …    les photos (jusqu'à 5 par village)
+    assets/images/<id>1.jpg …    les photos (jusqu'à 3 par village par défaut)
     assets/images/CREDITS.md     licences et auteurs (lisible)
     assets/images/credits.json   crédits réutilisés lors des relances (ne pas supprimer)
     data/photos.js               manifeste régénéré, en tableau, crédits inclus
@@ -40,7 +40,7 @@ PHOTOS_JS = os.path.join(ROOT, "data", "photos.js")
 UA = "AtlasTresorsFranceBot/1.0 (personal heritage guide; contact: utilisateur@exemple.fr) Python-urllib"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 THUMB_W = 1200
-MAX_DEFAULT = 5
+MAX_DEFAULT = 3
 PAUSE = 0.7            # secondes entre villages (politesse)
 RETRIES = 2
 
@@ -48,6 +48,31 @@ SSL_CTX = ssl.create_default_context()
 
 SKIP_NAME = re.compile(r"(blason|coat[_ ]of[_ ]arms|logo|drapeau|flag|armoiries|\bmap\b|carte|plan|localisation|panorama_?map|\.svg$|\.pdf$|\.tif)", re.I)
 OK_MIME = ("image/jpeg", "image/png")
+
+
+def license_url(name):
+    """URL canonique du texte d'une licence à partir de son nom court."""
+    low = (name or "").lower()
+    mm = re.search(r'cc[\s-]*by(-sa)?[\s-]*([0-9](?:\.[0-9])?)', low)
+    if mm:
+        kind = "by-sa" if mm.group(1) else "by"
+        ver = mm.group(2)
+        if "." not in ver:
+            ver += ".0"
+        return f"https://creativecommons.org/licenses/{kind}/{ver}/"
+    if "cc0" in low or "zero" in low:
+        return "https://creativecommons.org/publicdomain/zero/1.0/"
+    if "public domain" in low or "domaine public" in low:
+        return "https://creativecommons.org/publicdomain/mark/1.0/"
+    if "licence ouverte" in low or "etalab" in low or "open licence" in low:
+        return "https://www.etalab.gouv.fr/licence-ouverte-open-licence/"
+    if "gfdl" in low or "gnu free" in low:
+        return "https://www.gnu.org/licenses/fdl-1.3.html"
+    if low.strip() == "gpl" or "gnu general public" in low:
+        return "https://www.gnu.org/licenses/gpl-3.0.html"
+    if low.strip() == "fal" or "art libre" in low or "free art" in low:
+        return "https://artlibre.org/licence/lal/en/"
+    return ""
 
 
 def _open(url):
@@ -111,10 +136,12 @@ def commons_candidates(nom, departement, want):
         ext = ii.get("extmetadata", {})
         lic = ext.get("LicenseShortName", {}).get("value", "").strip()
         artist = clean_artist(ext.get("Artist", {}).get("value", ""))
-        credit = " / ".join(x for x in [artist or None, "Wikimedia Commons", lic or None] if x)
+        # crédit = « Auteur / Wikimedia Commons » (la licence est portée à part)
+        credit = " / ".join(x for x in [artist or None, "Wikimedia Commons"] if x)
         link = "https://commons.wikimedia.org/wiki/" + urllib.parse.quote(title.replace(" ", "_"))
         items.append({
             "thumburl": thumb, "filetitle": title, "credit": credit, "link": link,
+            "license": lic, "licenseUrl": license_url(lic),
             "landscape": (w >= h), "index": p.get("index", 999), "lic": lic or "?", "artist": artist or "?",
         })
     # paysage d'abord (meilleur pour les vignettes), en conservant l'ordre de pertinence
@@ -135,7 +162,7 @@ def existing_files(vid):
 def main():
     ap = argparse.ArgumentParser(description="Télécharge jusqu'à N photos libres par village.")
     ap.add_argument("--limit", type=int, default=0, help="nombre de villages (0 = tous)")
-    ap.add_argument("--max", type=int, default=MAX_DEFAULT, help="photos max par village (défaut 5)")
+    ap.add_argument("--max", type=int, default=MAX_DEFAULT, help="photos max par village (défaut 3)")
     ap.add_argument("--force", action="store_true", help="re-télécharge même si déjà présent")
     ap.add_argument("--insecure", action="store_true", help="désactive la vérification TLS (dépannage macOS)")
     args = ap.parse_args()
@@ -173,9 +200,11 @@ def main():
             for _, f in disk:
                 base = os.path.basename(f)
                 c = saved.get(base, {})
-                entries.append({"src": f"assets/images/{base}", "credit": c.get("credit", ""), "link": c.get("link", "")})
+                entries.append({"src": f"assets/images/{base}", "credit": c.get("credit", ""), "link": c.get("link", ""),
+                                "license": c.get("license", ""), "licenseUrl": c.get("licenseUrl", "")})
             manifest[vid] = entries
-            creditsData[vid] = [{"file": os.path.basename(f), "credit": e.get("credit", ""), "link": e.get("link", "")}
+            creditsData[vid] = [{"file": os.path.basename(f), "credit": e.get("credit", ""), "link": e.get("link", ""),
+                                 "license": e.get("license", ""), "licenseUrl": e.get("licenseUrl", "")}
                                 for (_, f), e in zip(disk, entries)]
             print(f"{tag} : {len(entries)} déjà présente(s), conservée(s)")
             skipped += 1
@@ -195,8 +224,10 @@ def main():
                 base = f"{vid}{n}.jpg"
                 with open(os.path.join(IMG_DIR, base), "wb") as f:
                     f.write(data)
-                entries.append({"src": f"assets/images/{base}", "credit": c["credit"], "link": c["link"]})
-                cdata.append({"file": base, "credit": c["credit"], "link": c["link"]})
+                entries.append({"src": f"assets/images/{base}", "credit": c["credit"], "link": c["link"],
+                                "license": c.get("license", ""), "licenseUrl": c.get("licenseUrl", "")})
+                cdata.append({"file": base, "credit": c["credit"], "link": c["link"],
+                              "license": c.get("license", ""), "licenseUrl": c.get("licenseUrl", "")})
                 credits_rows.append((nom, c["filetitle"], c["lic"], c["artist"], c["link"]))
             if entries:
                 manifest[vid] = entries
@@ -234,7 +265,7 @@ def write_photos_js(manifest):
              "window.ATLAS = window.ATLAS || {};", "window.ATLAS.photos = {"]
     for vid in sorted(manifest):
         photos = manifest[vid]
-        inner = ", ".join('{ src: "%s", credit: "%s", link: "%s" }' % (_esc(p["src"]), _esc(p.get("credit")), _esc(p.get("link"))) for p in photos)
+        inner = ", ".join('{ src: "%s", credit: "%s", link: "%s", license: "%s", licenseUrl: "%s" }' % (_esc(p["src"]), _esc(p.get("credit")), _esc(p.get("link")), _esc(p.get("license")), _esc(p.get("licenseUrl"))) for p in photos)
         lines.append(f'  "{vid}": [{inner}],')
     lines.append("};")
     open(PHOTOS_JS, "w", encoding="utf-8").write("\n".join(lines) + "\n")

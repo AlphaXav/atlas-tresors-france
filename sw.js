@@ -1,15 +1,15 @@
 /* Atlas des Trésors de France — service worker
  * Stratégie : cache-first sur le shell applicatif, réseau pour le reste.
  * Le service worker n'est actif que via http(s)/localhost (pas en file://). */
-const CACHE = "atlas-v2";
+const CACHE = "atlas-v6";
 const SHELL = [
   "./", "./index.html", "./manifest.webmanifest",
   "./assets/css/styles.css",
-  "./assets/icons/icon.svg",
+  "./assets/icons/icon.svg", "./assets/og-image.png",
   "./assets/js/core.js", "./assets/js/store.js", "./assets/js/app.js",
-  "./assets/js/views/villages.js", "./assets/js/views/others.js", "./assets/js/views/unesco.js",
+  "./assets/js/views/villages.js", "./assets/js/views/others.js", "./assets/js/views/unesco.js", "./assets/js/views/vpah.js",
   "./data/villages.js", "./data/regions.js", "./data/roadtrips.js",
-  "./data/gastronomie.js", "./data/panoramas.js", "./data/chateaux.js", "./data/photos.js", "./data/officiel.js", "./data/vpf.js", "./data/unesco.js"
+  "./data/gastronomie.js", "./data/panoramas.js", "./data/chateaux.js", "./data/photos.js", "./data/officiel.js", "./data/vpf.js", "./data/unesco.js", "./data/vpah.js"
 ];
 
 self.addEventListener("install", (e) => {
